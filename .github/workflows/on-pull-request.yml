@@ -1,0 +1,94 @@
+concurrency:
+  cancel-in-progress: true
+  group: pull-request-${{ github.event.pull_request.number }}
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: canidae-solutions/lix-quick-install-action@v4
+      - run: nix flake check --print-build-logs
+  plan:
+    defaults:
+      run:
+        working-directory: terraform
+    env:
+      TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+      TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+      TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+      TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: canidae-solutions/lix-quick-install-action@v4
+      - name: Install tofu
+        run: nix profile install .#tofu
+      - id: app-token
+        name: Generate GitHub App token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PEM_KEY }}
+          repositories: terraform-state
+      - env:
+          GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
+          GIT_USERNAME: x-access-token
+        name: tofu init
+        run: tofu init -input=false
+      - name: tofu validate
+        run: tofu validate -no-color
+      - env:
+          GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
+          GIT_USERNAME: x-access-token
+        name: tofu plan
+        run: set -o pipefail; tofu plan -no-color -input=false 2>&1 | tee plan.txt
+      - if: always()
+        name: Post plan as PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let plan;
+            try {
+              plan = fs.readFileSync('plan.txt', 'utf8');
+            } catch (e) {
+              plan = 'Plan output not available.';
+            }
+            const maxLen = 65000;
+            const truncated = plan.length > maxLen
+              ? plan.slice(0, maxLen) + '\n\n... (truncated, see job logs for full output)'
+              : plan;
+            const body = `## OpenTofu Plan\n\n<details><summary>Show Plan</summary>\n\n\`\`\`hcl\n${truncated}\n\`\`\`\n\n</details>`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            for (const comment of comments) {
+              if (comment.user.type === 'Bot' && comment.body.startsWith('## OpenTofu Plan')) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id,
+                });
+              }
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+name: Pull Request
+"on":
+  pull_request:
+    branches:
+      - main
+    paths:
+      - terraform/**
+      - flake.nix
+      - flake.lock
+      - .github/workflows/**
+permissions:
+  contents: read
+  pull-requests: write
