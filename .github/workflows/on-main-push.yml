@@ -1,0 +1,85 @@
+concurrency:
+  cancel-in-progress: false
+  group: main-push
+jobs:
+  apply:
+    defaults:
+      run:
+        working-directory: terraform
+    env:
+      TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+      TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+      TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+      TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
+    environment: production
+    needs:
+      - plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: canidae-solutions/lix-quick-install-action@v4
+      - name: Install tofu
+        run: nix profile install .#tofu
+      - id: app-token
+        name: Generate GitHub App token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PEM_KEY }}
+          repositories: terraform-state
+      - env:
+          GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
+          GIT_USERNAME: x-access-token
+        name: tofu init
+        run: tofu init -input=false
+      - env:
+          GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
+          GIT_USERNAME: x-access-token
+        name: tofu apply
+        run: tofu apply -auto-approve -input=false
+  plan:
+    defaults:
+      run:
+        working-directory: terraform
+    env:
+      TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+      TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+      TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+      TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: canidae-solutions/lix-quick-install-action@v4
+      - name: Install tofu
+        run: nix profile install .#tofu
+      - id: app-token
+        name: Generate GitHub App token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PEM_KEY }}
+          repositories: terraform-state
+      - env:
+          GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
+          GIT_USERNAME: x-access-token
+        name: tofu init
+        run: tofu init -input=false
+      - name: tofu validate
+        run: tofu validate -no-color
+      - env:
+          GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
+          GIT_USERNAME: x-access-token
+        name: tofu plan
+        run: tofu plan -no-color -input=false
+name: Push
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - terraform/**
+      - flake.nix
+      - flake.lock
+      - .github/workflows/**
+permissions:
+  contents: read

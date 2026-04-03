@@ -1,0 +1,39 @@
+# Terraform / OpenTofu
+.terraform/
+.terraform.lock.hcl
+# Generated at runtime by terraform-backend-git wrapper
+*.auto.tf
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Backend config with real credentials
+backend.tfvars
+*.auto.tfvars
+
+# Variable files that may contain secrets
+secrets.tfvars
+sensitive.tfvars
+
+# Plan output (contains resolved values — may include secrets)
+tfplan
+*.tfplan
+
+# Nix / direnv
+/.direnv
+/.pre-commit-config.yaml
+/result*
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
