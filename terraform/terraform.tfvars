@@ -147,6 +147,10 @@ repositories = {
     }
   }
 
+  terraform-state = {
+    enable_branch_protection = false
+  }
+
   vim-ref-fish = {
     description = "A vim-ref source for fish"
   }
