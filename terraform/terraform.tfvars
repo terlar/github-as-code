@@ -126,14 +126,26 @@ repositories = {
 
   pre-commit-treefmt-bug = {}
 
-  resume = {}
+  resume = {
+    pages = {
+      source = {
+        branch = "gh-pages"
+      }
+    }
+  }
 
   sam-playground = {
     description = "Playground for SAM development"
     archived    = true
   }
 
-  "terlar.github.io" = {}
+  "terlar.github.io" = {
+    pages = {
+      source = {
+        branch = "master"
+      }
+    }
+  }
 
   vim-ref-fish = {
     description = "A vim-ref source for fish"
