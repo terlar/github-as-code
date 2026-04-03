@@ -23,7 +23,7 @@ locals {
 resource "github_branch_protection" "managed" {
   for_each = local.protected_repos
 
-  repository_id = "terlar/${each.key}"
+  repository_id = each.key
   pattern       = var.default_branch
 
   # Enforce on administrators as well

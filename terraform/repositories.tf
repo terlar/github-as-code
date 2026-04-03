@@ -67,6 +67,18 @@ resource "github_repository" "managed" {
   archive_on_destroy = each.value.archive_on_destroy
   archived           = each.value.archived
 
+  # GitHub Pages
+  dynamic "pages" {
+    for_each = each.value.pages != null ? [each.value.pages] : []
+    content {
+      build_type = pages.value.build_type
+      source {
+        branch = pages.value.source.branch
+        path   = pages.value.source.path
+      }
+    }
+  }
+
   lifecycle {
     # Prevent accidental name changes — rename manually if needed
     ignore_changes = [name]
