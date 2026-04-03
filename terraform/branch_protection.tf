@@ -16,7 +16,7 @@
 locals {
   protected_repos = {
     for name, cfg in var.repositories : name => cfg
-    if cfg.enable_branch_protection
+    if cfg.enable_branch_protection && !cfg.archived
   }
 }
 
