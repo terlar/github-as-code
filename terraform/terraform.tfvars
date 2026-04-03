@@ -92,6 +92,10 @@ repositories = {
     description = "Simple ruby version manager for fish"
   }
 
+  github-as-code = {
+    description = "Manage GitHub repositories"
+  }
+
   "indent-info.el" = {
     description = "Show indentation information in status bar"
   }
