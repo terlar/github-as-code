@@ -37,7 +37,7 @@ let
           {
             name = "Generate GitHub App token";
             id = "app-token";
-            uses = "actions/create-github-app-token@v1";
+            uses = "actions/create-github-app-token@v3";
             "with" = {
               app-id = "\${{ vars.GH_APP_ID }}";
               private-key = "\${{ secrets.GH_APP_PEM_KEY }}";
