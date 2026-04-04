@@ -27,6 +27,11 @@ jobs:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PEM_KEY }}
           repositories: terraform-state
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: terraform
       - env:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
@@ -36,7 +41,7 @@ jobs:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
         name: tofu apply
-        run: tofu apply -auto-approve -input=false
+        run: tofu apply -input=false tfplan
   plan:
     defaults:
       run:
@@ -70,7 +75,12 @@ jobs:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
         name: tofu plan
-        run: tofu plan -no-color -input=false
+        run: tofu plan -no-color -input=false -out=tfplan
+      - name: Upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: terraform/tfplan
 name: Push
 "on":
   push:
