@@ -5,7 +5,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: canidae-solutions/lix-quick-install-action@v4
       - run: nix flake check --print-build-logs
   plan:
@@ -19,7 +19,7 @@ jobs:
       TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: canidae-solutions/lix-quick-install-action@v4
       - name: Install tofu
         run: nix profile install .#tofu
