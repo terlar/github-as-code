@@ -54,7 +54,7 @@ variable "default_branch" {
 variable "required_approving_review_count" {
   description = "Number of required approving reviews on the default branch."
   type        = number
-  default     = 1
+  default     = 0
 }
 
 # ---------------------------------------------------------------------------
