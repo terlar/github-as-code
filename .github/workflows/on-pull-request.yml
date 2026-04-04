@@ -44,7 +44,7 @@ jobs:
         run: set -o pipefail; tofu plan -no-color -input=false 2>&1 | tee plan.txt
       - if: always()
         name: Post plan as PR comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
