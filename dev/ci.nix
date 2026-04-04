@@ -112,7 +112,7 @@ in
               }
               {
                 name = "Post plan as PR comment";
-                uses = "actions/github-script@v7";
+                uses = "actions/github-script@v8";
                 "if" = "always()";
                 "with" = {
                   script = ''
@@ -204,8 +204,16 @@ in
               }
               {
                 name = "tofu plan";
-                run = "tofu plan -no-color -input=false";
+                run = "tofu plan -no-color -input=false -out=tfplan";
                 env = gitEnv;
+              }
+              {
+                name = "Upload plan";
+                uses = "actions/upload-artifact@v4";
+                "with" = {
+                  name = "tfplan";
+                  path = "terraform/tfplan";
+                };
               }
             ];
           };
@@ -220,13 +228,21 @@ in
             defaults.run.working-directory = "terraform";
             steps = lib.mkAfter [
               {
+                name = "Download plan";
+                uses = "actions/download-artifact@v4";
+                "with" = {
+                  name = "tfplan";
+                  path = "terraform";
+                };
+              }
+              {
                 name = "tofu init";
                 run = "tofu init -input=false";
                 env = gitEnv;
               }
               {
                 name = "tofu apply";
-                run = "tofu apply -auto-approve -input=false";
+                run = "tofu apply -input=false tfplan";
                 env = gitEnv;
               }
             ];

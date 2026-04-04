@@ -16,7 +16,7 @@ jobs:
       - plan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: canidae-solutions/lix-quick-install-action@v4
       - name: Install tofu
         run: nix profile install .#tofu
@@ -27,6 +27,11 @@ jobs:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PEM_KEY }}
           repositories: terraform-state
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: terraform
       - env:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
@@ -36,7 +41,7 @@ jobs:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
         name: tofu apply
-        run: tofu apply -auto-approve -input=false
+        run: tofu apply -input=false tfplan
   plan:
     defaults:
       run:
@@ -48,7 +53,7 @@ jobs:
       TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: canidae-solutions/lix-quick-install-action@v4
       - name: Install tofu
         run: nix profile install .#tofu
@@ -70,7 +75,12 @@ jobs:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
         name: tofu plan
-        run: tofu plan -no-color -input=false
+        run: tofu plan -no-color -input=false -out=tfplan
+      - name: Upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: terraform/tfplan
 name: Push
 "on":
   push:
