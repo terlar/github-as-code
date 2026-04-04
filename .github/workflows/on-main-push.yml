@@ -22,7 +22,7 @@ jobs:
         run: nix profile install .#tofu
       - id: app-token
         name: Generate GitHub App token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PEM_KEY }}
@@ -54,7 +54,7 @@ jobs:
         run: nix profile install .#tofu
       - id: app-token
         name: Generate GitHub App token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PEM_KEY }}
