@@ -55,11 +55,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775307718,
-        "narHash": "sha256-WzycfalU3hLDUq34aASDKClBZBfoxuzWuYAkUTznb+U=",
+        "lastModified": 1775503648,
+        "narHash": "sha256-sKLRiYVnBb2z6MBmLVw1w++RjOANo5aBYkbFBHuxbCQ=",
         "owner": "terlar",
         "repo": "first-ci-kit",
-        "rev": "cbd3dc334ee9507b9e864ed1ee92252301ccd2f4",
+        "rev": "81ed7c95d18e105603b718bdf726d2b020554a45",
         "type": "github"
       },
       "original": {

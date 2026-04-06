@@ -14,7 +14,7 @@
   debug = true;
 
   perSystem =
-    { config, pkgs, ... }:
+    { config, ... }:
     {
       formatter = config.treefmt.programs.nixfmt.package;
 
@@ -24,32 +24,13 @@
 
       pre-commit.check.enable = false;
       pre-commit.settings.hooks = {
-        # PR pipeline → on-pull-request.yml
         first-ci-kit-gen-github-actions = {
           enable = true;
-          settings.pipeline = "pr";
-          settings.outputPath = ".github/workflows/on-pull-request.yml";
-          files = "^dev/ci\\.nix$";
-        };
-
-        # Push pipeline → on-main-push.yml (custom hook, same mechanism)
-        first-ci-kit-gen-github-actions-push = {
-          enable = true;
-          package = pkgs.writeShellApplication {
-            name = "generate-github-actions-push";
-            runtimeInputs = [ pkgs.yq-go ];
-            text = ''
-              out="$(nix build --extra-experimental-features 'nix-command flakes' \
-                --print-out-paths \
-                .#ci-pipeline-github-actions-push
-              )"
-              mkdir -p .github/workflows
-              yq --prettyPrint --output-format yaml "$out" > .github/workflows/on-main-push.yml
-            '';
+          settings.pipelines = {
+            pr = ".github/workflows/on-pull-request.yml";
+            push = ".github/workflows/on-main-push.yml";
           };
-          entry = "${config.pre-commit.settings.hooks.first-ci-kit-gen-github-actions-push.package}/bin/generate-github-actions-push";
           files = "^dev/ci\\.nix$";
-          pass_filenames = false;
         };
       };
     };

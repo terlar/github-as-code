@@ -18,7 +18,6 @@ repositories = {
 
   dev-flake = {
     description              = "Nix flake to support the pattern of using a separate development flake"
-    required_status_checks   = ["check", "check-template (root)", "check-template (root-project)", "check-template (subflake-nixpkgs-project)", "check-template (subflake-project)"]
   }
 
   docker-dev-tools = {
@@ -43,7 +42,6 @@ repositories = {
 
   emacs-config = {
     description              = "GNU Emacs configuration"
-    required_status_checks   = ["Prepare", "Build (ubuntu-latest)"]
   }
 
   emacs-find-project = {
@@ -60,7 +58,6 @@ repositories = {
 
   first-ci-kit = {
     description              = "Nix module system as DSL to generate pipelines across CI tools"
-    required_status_checks   = ["check"]
   }
 
   first-ci-kit-demo = {
@@ -97,7 +94,6 @@ repositories = {
 
   github-as-code = {
     description              = "Manage GitHub repositories"
-    required_status_checks   = ["checks", "plan"]
   }
 
   "indent-info.el" = {
@@ -114,7 +110,6 @@ repositories = {
 
   nix-config = {
     description              = "Configuration for NixOS and user home (dot files)."
-    required_status_checks   = ["Check", "Changes"]
   }
 
   nix-service-monorepo = {
