@@ -20,6 +20,10 @@ repositories = {
     description              = "Nix flake to support the pattern of using a separate development flake"
   }
 
+  dharma = {
+    description = "Dharma text publishing: one YAML source -> HTML, EPUB, print PDF"
+  }
+
   docker-dev-tools = {
     description = "Collection of simple tools for development using docker"
   }
