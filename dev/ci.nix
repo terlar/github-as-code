@@ -115,6 +115,7 @@ in
                 uses = "actions/github-script@v8";
                 "if" = "always()";
                 "with" = {
+                  working-directory = "terraform";
                   script = ''
                     const fs = require('fs');
                     let plan;
