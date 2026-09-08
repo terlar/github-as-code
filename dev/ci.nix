@@ -39,7 +39,7 @@ let
             id = "app-token";
             uses = "actions/create-github-app-token@v3";
             "with" = {
-              app-id = "\${{ vars.GH_APP_ID }}";
+              client-id = "\${{ vars.GH_CLIENT_ID }}";
               private-key = "\${{ secrets.GH_APP_PEM_KEY }}";
               repositories = "terraform-state";
             };
@@ -119,7 +119,7 @@ in
                     const fs = require('fs');
                     let plan;
                     try {
-                      plan = fs.readFileSync('plan.txt', 'utf8');
+                      plan = fs.readFileSync('terraform/plan.txt', 'utf8');
                     } catch (e) {
                       plan = 'Plan output not available.';
                     }
