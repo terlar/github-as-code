@@ -88,12 +88,14 @@ variable "repositories" {
     # Required status checks for branch protection (empty = none required)
     required_status_checks = optional(list(string), [])
     # GitHub Pages configuration (null = disabled)
+    # build_type: "legacy" (branch source) or "workflow" (GitHub Actions).
+    # source is required only for "legacy"; omit for "workflow".
     pages = optional(object({
       build_type = optional(string, "legacy")
-      source = object({
+      source = optional(object({
         branch = string
         path   = optional(string, "/")
-      })
+      }))
     }), null)
   }))
   default = {}

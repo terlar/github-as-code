@@ -72,9 +72,14 @@ resource "github_repository" "managed" {
     for_each = each.value.pages != null ? [each.value.pages] : []
     content {
       build_type = pages.value.build_type
-      source {
-        branch = pages.value.source.branch
-        path   = pages.value.source.path
+      dynamic "source" {
+        # Only "legacy" builds use a source branch; "workflow" builds are
+        # deployed from GitHub Actions artifacts (see the provider schema).
+        for_each = pages.value.build_type == "legacy" ? [pages.value.source] : []
+        content {
+          branch = source.value.branch
+          path   = source.value.path
+        }
       }
     }
   }
