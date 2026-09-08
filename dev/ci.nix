@@ -39,7 +39,7 @@ let
             id = "app-token";
             uses = "actions/create-github-app-token@v3";
             "with" = {
-              app-id = "\${{ vars.GH_APP_ID }}";
+              client-id = "\${{ vars.GH_CLIENT_ID }}";
               private-key = "\${{ secrets.GH_APP_PEM_KEY }}";
               repositories = "terraform-state";
             };
