@@ -115,12 +115,11 @@ in
                 uses = "actions/github-script@v8";
                 "if" = "always()";
                 "with" = {
-                  working-directory = "terraform";
                   script = ''
                     const fs = require('fs');
                     let plan;
                     try {
-                      plan = fs.readFileSync('plan.txt', 'utf8');
+                      plan = fs.readFileSync('terraform/plan.txt', 'utf8');
                     } catch (e) {
                       plan = 'Plan output not available.';
                     }

@@ -50,7 +50,7 @@ jobs:
             const fs = require('fs');
             let plan;
             try {
-              plan = fs.readFileSync('plan.txt', 'utf8');
+              plan = fs.readFileSync('terraform/plan.txt', 'utf8');
             } catch (e) {
               plan = 'Plan output not available.';
             }
@@ -79,7 +79,6 @@ jobs:
               issue_number: context.issue.number,
               body,
             });
-          working-directory: terraform
 name: Pull Request
 "on":
   pull_request:
