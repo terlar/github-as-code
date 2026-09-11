@@ -21,8 +21,9 @@ repositories = {
   }
 
   dharma = {
-    description = "Dharma text publishing: one YAML source -> HTML, EPUB, print PDF"
-    visibility  = "private"
+    description              = "Dharma text publishing: one YAML source -> HTML, EPUB, print PDF"
+    visibility               = "private"
+    enable_branch_protection = false
   }
 
   docker-dev-tools = {
