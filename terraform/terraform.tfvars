@@ -101,7 +101,7 @@ repositories = {
 
   github-as-code = {
     description            = "Manage GitHub repositories"
-    required_status_checks = ["Pull Request / checks"]
+    required_status_checks = ["checks"]
   }
 
   "indent-info.el" = {
