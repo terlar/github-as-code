@@ -87,6 +87,10 @@ variable "repositories" {
     enable_branch_protection = optional(bool, true)
     # Required status checks for branch protection (empty = none required)
     required_status_checks = optional(list(string), [])
+    # Secret scanning + push protection (public visibility or GitHub Advanced Security required)
+    enable_secret_scanning = optional(bool, true)
+    # Dependabot security alerts for vulnerable dependencies
+    vulnerability_alerts = optional(bool, true)
     # GitHub Pages configuration (null = disabled)
     # build_type: "legacy" (branch source) or "workflow" (GitHub Actions).
     # source is required only for "legacy"; omit for "workflow".
