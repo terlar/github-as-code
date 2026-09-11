@@ -62,12 +62,6 @@ in
           settings = {
             name = "Pull Request";
             on.pull_request.branches = [ "main" ];
-            on.pull_request.paths = [
-              "terraform/**"
-              "flake.nix"
-              "flake.lock"
-              ".github/workflows/**"
-            ];
             concurrency = {
               group = "pull-request-\${{ github.event.pull_request.number }}";
               cancel-in-progress = true;
@@ -87,28 +81,32 @@ in
       jobs = {
         checks = {
           tags = [ "nix" ];
+          github-actions = {
+            "if" = "\${{ github.event.pull_request.head.repo.full_name == github.repository }}";
+          };
           commands = [ "nix flake check --print-build-logs" ];
         };
 
         plan = {
           tags = [ "terraform" ];
           github-actions = {
-            env = tofuEnv;
+            "if" = "\${{ github.event.pull_request.head.repo.full_name == github.repository }}";
             defaults.run.working-directory = "terraform";
             steps = lib.mkAfter [
               {
                 name = "tofu init";
                 run = "tofu init -input=false";
-                env = gitEnv;
+                env = tofuEnv // gitEnv;
               }
               {
                 name = "tofu validate";
                 run = "tofu validate -no-color";
+                env = tofuEnv;
               }
               {
                 name = "tofu plan";
                 run = "set -o pipefail; tofu plan -no-color -input=false 2>&1 | tee plan.txt";
-                env = gitEnv;
+                env = tofuEnv // gitEnv;
               }
               {
                 name = "Post plan as PR comment";
@@ -190,22 +188,22 @@ in
         plan = {
           tags = [ "terraform" ];
           github-actions = {
-            env = tofuEnv;
             defaults.run.working-directory = "terraform";
             steps = lib.mkAfter [
               {
                 name = "tofu init";
                 run = "tofu init -input=false";
-                env = gitEnv;
+                env = tofuEnv // gitEnv;
               }
               {
                 name = "tofu validate";
                 run = "tofu validate -no-color";
+                env = tofuEnv;
               }
               {
                 name = "tofu plan";
                 run = "tofu plan -no-color -input=false -out=tfplan";
-                env = gitEnv;
+                env = tofuEnv // gitEnv;
               }
               {
                 name = "Upload plan";
@@ -223,7 +221,6 @@ in
           tags = [ "terraform" ];
           needs = [ { job = "plan"; } ];
           github-actions = {
-            env = tofuEnv;
             environment = "production";
             defaults.run.working-directory = "terraform";
             steps = lib.mkAfter [
@@ -238,12 +235,12 @@ in
               {
                 name = "tofu init";
                 run = "tofu init -input=false";
-                env = gitEnv;
+                env = tofuEnv // gitEnv;
               }
               {
                 name = "tofu apply";
                 run = "tofu apply -input=false tfplan";
-                env = gitEnv;
+                env = tofuEnv // gitEnv;
               }
             ];
           };

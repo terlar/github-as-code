@@ -29,6 +29,8 @@
 #       delete_branch_on_merge   = true
 #       enable_branch_protection = true
 #       required_status_checks   = ["CI / build"]
+#       enable_secret_scanning   = true
+#       vulnerability_alerts     = true
 #     }
 #   }
 # ---------------------------------------------------------------------------
@@ -66,6 +68,21 @@ resource "github_repository" "managed" {
   # Safety: archive instead of destroy
   archive_on_destroy = each.value.archive_on_destroy
   archived           = each.value.archived
+
+  # Security: Dependabot alerts and secret scanning (archived repos untouched)
+  vulnerability_alerts = each.value.archived ? null : each.value.vulnerability_alerts
+
+  dynamic "security_and_analysis" {
+    for_each = each.value.enable_secret_scanning && !each.value.archived ? [1] : []
+    content {
+      secret_scanning {
+        status = "enabled"
+      }
+      secret_scanning_push_protection {
+        status = "enabled"
+      }
+    }
+  }
 
   # GitHub Pages
   dynamic "pages" {

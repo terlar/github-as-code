@@ -6,11 +6,6 @@ jobs:
     defaults:
       run:
         working-directory: terraform
-    env:
-      TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
-      TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
-      TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
-      TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
     environment: production
     needs:
       - plan
@@ -35,22 +30,25 @@ jobs:
       - env:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
+          TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+          TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+          TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+          TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
         name: tofu init
         run: tofu init -input=false
       - env:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
+          TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+          TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+          TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+          TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
         name: tofu apply
         run: tofu apply -input=false tfplan
   plan:
     defaults:
       run:
         working-directory: terraform
-    env:
-      TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
-      TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
-      TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
-      TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -67,13 +65,26 @@ jobs:
       - env:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
+          TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+          TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+          TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+          TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
         name: tofu init
         run: tofu init -input=false
-      - name: tofu validate
+      - env:
+          TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+          TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+          TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+          TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
+        name: tofu validate
         run: tofu validate -no-color
       - env:
           GIT_PASSWORD: ${{ steps.app-token.outputs.token }}
           GIT_USERNAME: x-access-token
+          TF_VAR_github_app_id: ${{ vars.GH_APP_ID }}
+          TF_VAR_github_app_installation_id: ${{ vars.GH_APP_INSTALLATION_ID }}
+          TF_VAR_github_app_pem_key: ${{ secrets.GH_APP_PEM_KEY }}
+          TF_VAR_state_encryption_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
         name: tofu plan
         run: tofu plan -no-color -input=false -out=tfplan
       - name: Upload plan

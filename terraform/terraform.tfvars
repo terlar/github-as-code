@@ -17,13 +17,14 @@ repositories = {
   }
 
   dev-flake = {
-    description              = "Nix flake to support the pattern of using a separate development flake"
+    description = "Nix flake to support the pattern of using a separate development flake"
   }
 
   dharma = {
     description              = "Dharma text publishing: one YAML source -> HTML, EPUB, print PDF"
     visibility               = "private"
     enable_branch_protection = false
+    enable_secret_scanning   = false
   }
 
   docker-dev-tools = {
@@ -47,7 +48,7 @@ repositories = {
   }
 
   emacs-config = {
-    description              = "GNU Emacs configuration"
+    description = "GNU Emacs configuration"
   }
 
   emacs-find-project = {
@@ -63,7 +64,7 @@ repositories = {
   }
 
   first-ci-kit = {
-    description              = "Nix module system as DSL to generate pipelines across CI tools"
+    description = "Nix module system as DSL to generate pipelines across CI tools"
   }
 
   first-ci-kit-demo = {
@@ -99,7 +100,8 @@ repositories = {
   }
 
   github-as-code = {
-    description = "Manage GitHub repositories"
+    description            = "Manage GitHub repositories"
+    required_status_checks = ["Pull Request / checks"]
   }
 
   "indent-info.el" = {
@@ -115,7 +117,7 @@ repositories = {
   }
 
   nix-config = {
-    description              = "Configuration for NixOS and user home (dot files)."
+    description = "Configuration for NixOS and user home (dot files)."
   }
 
   nix-service-monorepo = {
@@ -160,6 +162,7 @@ repositories = {
   terraform-state = {
     enable_branch_protection = false
     visibility               = "private"
+    enable_secret_scanning   = false
   }
 
   vim-ref-fish = {
