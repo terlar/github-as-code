@@ -22,6 +22,7 @@ repositories = {
 
   dharma = {
     description = "Dharma text publishing: one YAML source -> HTML, EPUB, print PDF"
+    visibility  = "private"
   }
 
   docker-dev-tools = {
@@ -97,7 +98,7 @@ repositories = {
   }
 
   github-as-code = {
-    description              = "Manage GitHub repositories"
+    description = "Manage GitHub repositories"
   }
 
   "indent-info.el" = {
@@ -157,6 +158,7 @@ repositories = {
 
   terraform-state = {
     enable_branch_protection = false
+    visibility               = "private"
   }
 
   vim-ref-fish = {
