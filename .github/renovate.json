@@ -1,0 +1,27 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "nix": {
+    "enabled": true
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/\\.nix$/"],
+      "matchStrings": [
+        "\"(?<depName>[\\w-]+/[\\w-]+)@(?<currentValue>[\\w.]+)\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "depTypeTemplate": "action",
+      "versioningTemplate": "regex:^v(?<major>\\d+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["github-tags"],
+      "matchDepTypes": ["action"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "enabled": false
+    }
+  ]
+}

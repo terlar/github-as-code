@@ -56,25 +56,23 @@ in
     # PR pipeline: run nix flake check + tofu plan, post plan as PR comment
     # -------------------------------------------------------------------------
     pr = {
-      pipeline = {
-        github-actions = {
-          defaultRunsOn = "ubuntu-latest";
-          settings = {
-            name = "Pull Request";
-            on.pull_request.branches = [ "main" ];
-            concurrency = {
-              group = "pull-request-\${{ github.event.pull_request.number }}";
-              cancel-in-progress = true;
-            };
-            permissions = {
-              contents = "read";
-              pull-requests = "write";
-            };
+      github-actions = {
+        defaultRunsOn = "ubuntu-latest";
+        settings = {
+          name = "Pull Request";
+          on.pull_request.branches = [ "main" ];
+          concurrency = {
+            group = "pull-request-\${{ github.event.pull_request.number }}";
+            cancel-in-progress = true;
+          };
+          permissions = {
+            contents = "read";
+            pull-requests = "write";
           };
         };
-
-        process-compose.cli.environment.PC_DISABLE_TUI = true;
       };
+
+      process-compose.cli.environment.PC_DISABLE_TUI = true;
 
       inherit jobSets;
 
@@ -159,34 +157,36 @@ in
     # Push pipeline: run tofu plan then apply on push to main
     # -------------------------------------------------------------------------
     push = {
-      pipeline = {
-        github-actions = {
-          defaultRunsOn = "ubuntu-latest";
-          settings = {
-            name = "Push";
-            on.push.branches = [ "main" ];
-            on.push.paths = [
-              "terraform/**"
-              "flake.nix"
-              "flake.lock"
-              ".github/workflows/**"
-            ];
-            concurrency = {
-              group = "main-push";
-              cancel-in-progress = false;
-            };
-            permissions.contents = "read";
+      github-actions = {
+        defaultRunsOn = "ubuntu-latest";
+        settings = {
+          name = "Push";
+          on.push.branches = [ "main" ];
+          on.push.paths = [
+            "terraform/**"
+            "flake.nix"
+            "flake.lock"
+            ".github/workflows/**"
+          ];
+          concurrency = {
+            group = "main-push";
+            cancel-in-progress = false;
           };
+          permissions.contents = "read";
         };
-
-        process-compose.cli.environment.PC_DISABLE_TUI = true;
       };
+
+      process-compose.cli.environment.PC_DISABLE_TUI = true;
 
       inherit jobSets;
 
       jobs = {
         plan = {
           tags = [ "terraform" ];
+          artifacts.upload = {
+            name = "tfplan";
+            paths = [ "terraform/tfplan" ];
+          };
           github-actions = {
             defaults.run.working-directory = "terraform";
             steps = lib.mkAfter [
@@ -205,14 +205,6 @@ in
                 run = "tofu plan -no-color -input=false -out=tfplan";
                 env = tofuEnv // gitEnv;
               }
-              {
-                name = "Upload plan";
-                uses = "actions/upload-artifact@v4";
-                "with" = {
-                  name = "tfplan";
-                  path = "terraform/tfplan";
-                };
-              }
             ];
           };
         };
@@ -220,18 +212,14 @@ in
         apply = {
           tags = [ "terraform" ];
           needs = [ { job = "plan"; } ];
+          artifacts.download = {
+            name = "tfplan";
+            path = "terraform";
+          };
           github-actions = {
             environment = "production";
             defaults.run.working-directory = "terraform";
             steps = lib.mkAfter [
-              {
-                name = "Download plan";
-                uses = "actions/download-artifact@v4";
-                "with" = {
-                  name = "tfplan";
-                  path = "terraform";
-                };
-              }
               {
                 name = "tofu init";
                 run = "tofu init -input=false";
