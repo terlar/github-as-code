@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: canidae-solutions/lix-quick-install-action@v4
+      - uses: canidae-solutions/lix-quick-install-action@v5
       - run: nix flake check --print-build-logs
   plan:
     defaults:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: canidae-solutions/lix-quick-install-action@v4
+      - uses: canidae-solutions/lix-quick-install-action@v5
       - name: Install tofu
         run: nix profile install .#tofu
       - id: app-token

@@ -16,7 +16,7 @@ jobs:
         with:
           name: tfplan
           path: terraform
-      - uses: canidae-solutions/lix-quick-install-action@v4
+      - uses: canidae-solutions/lix-quick-install-action@v5
       - name: Install tofu
         run: nix profile install .#tofu
       - id: app-token
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: canidae-solutions/lix-quick-install-action@v4
+      - uses: canidae-solutions/lix-quick-install-action@v5
       - name: Install tofu
         run: nix profile install .#tofu
       - id: app-token
