@@ -108,7 +108,7 @@ in
               }
               {
                 name = "Post plan as PR comment";
-                uses = "actions/github-script@v8";
+                uses = "actions/github-script@v9";
                 "if" = "always()";
                 "with" = {
                   script = ''
