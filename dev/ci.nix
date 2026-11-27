@@ -20,7 +20,7 @@ let
     nix = {
       tags = [ "nix" ];
       jobDefaults.github-actions = {
-        steps = [ { uses = "canidae-solutions/lix-quick-install-action@v4"; } ];
+        steps = [ { uses = "canidae-solutions/lix-quick-install-action@v5"; } ];
       };
     };
 
@@ -28,7 +28,7 @@ let
       tags = [ "terraform" ];
       jobDefaults.github-actions = {
         steps = [
-          { uses = "canidae-solutions/lix-quick-install-action@v4"; }
+          { uses = "canidae-solutions/lix-quick-install-action@v5"; }
           {
             name = "Install tofu";
             run = "nix profile install .#tofu";
